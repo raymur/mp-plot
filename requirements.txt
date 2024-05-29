@@ -8,9 +8,11 @@ attrs==23.2.0
 Babel==2.15.0
 beautifulsoup4==4.12.3
 bleach==6.1.0
+blinker==1.8.2
 certifi==2024.2.2
 cffi==1.16.0
 charset-normalizer==3.3.2
+click==8.1.7
 comm==0.2.2
 contourpy==1.2.1
 cycler==0.12.1
@@ -20,6 +22,8 @@ defusedxml==0.7.1
 exceptiongroup==1.2.1
 executing==2.0.1
 fastjsonschema==2.19.1
+Flask==3.0.3
+Flask-Cors==4.0.1
 fonttools==4.52.4
 fqdn==1.5.1
 h11==0.14.0
@@ -29,6 +33,7 @@ idna==3.7
 ipykernel==6.29.4
 ipython==8.24.0
 isoduration==20.11.0
+itsdangerous==2.2.0
 jedi==0.19.1
 Jinja2==3.1.4
 json5==0.9.25
@@ -101,3 +106,4 @@ wcwidth==0.2.13
 webcolors==1.13
 webencodings==0.5.1
 websocket-client==1.8.0
+Werkzeug==3.0.3
