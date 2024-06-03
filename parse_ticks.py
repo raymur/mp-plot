@@ -64,8 +64,10 @@ def get_tick_df(filename):
     style_types = ['Lead', 'Solo', 'Flash', 'Send', numpy.nan]
     columns = ['Date', 'Rating Code', 'Route Type', 'Pitches', 'Style']
     df = df.loc[df['Style'].isin(style_types), columns]
-    df = df.loc[df['Route Type'].str.contains('Trad|Sport', regex=True)]
+    df = df.loc[df['Route Type'].str.contains('Trad|Sport', na=False, regex=True)]
+    # TODO: check null
     df = df.loc[df['Rating Code'] < 20000] # filter out bouldering/ice/mixed/aid/snow
+    # TODO: check null
     df['Date'] = df['Date'].apply(lambda x: datetime.datetime.strptime(x, "%Y-%m-%d").date() if type(x) == str else x)
     df = df.sort_values(by='Date', ascending=True)
     df['Normalized Rating Code'] = df['Rating Code'].apply(normailize_rating_code)
@@ -82,13 +84,27 @@ def generate_yticks(ylim_min, ylim_max):
     labels = list(labels[filter_arr])
     return yticks, labels
 
+def get_color_info(climb_types: numpy.array):
+    cmap, styles = [], []
+    N = len(climb_types)
+    if 0 in climb_types:
+        cmap.append('r')
+        styles.append('Sport')
+    if 1 in climb_types:
+        cmap.append('b')
+        styles.append('Trad')
+    if 2 in climb_types:
+        cmap.append('y')
+        styles.append('Solo')
+    return ListedColormap(cmap, N=N), styles
+    
+
 def save_plot(df, plot_filename):
     x = df['Date']
     y = df['Normalized Rating Code']
-    c = df.apply(lambda x : 3 if (x['Style'] == 'Solo') else (1 if (x['Route Type'] == 'Sport') else 2) , axis=1)
-    area = (df['Pitches'].apply(lambda x : math.pow(x, 0.9)) * 15) 
-    styles = ['Sport', 'Trad', 'Solo']
-    colors = ListedColormap(['r','b','y'])
+    c = df.apply(lambda x : 2 if (x['Style'] == 'Solo') else (0 if ('Sport' in x['Route Type'] and 'Trad' not in x['Route Type']) else 1) , axis=1)
+    area = (df['Pitches'].apply(lambda x : math.pow(x, 0.9)) * 15)
+    colors, styles = get_color_info(c.unique())
     scatter = plt.scatter(x, y, c=c, cmap=colors, s=area, alpha=0.5) 
     ylim_min, ylim_max = plt.ylim()
     yticks, ylabels = generate_yticks(ylim_min, ylim_max)
