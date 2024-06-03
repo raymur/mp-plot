@@ -11,26 +11,33 @@ import '@fontsource/roboto/700.css';
 import CircularProgress from '@mui/material/CircularProgress';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
+import Alert from '@mui/material/Alert';
+import axios from "axios";
+
+var Buffer = require('buffer/').Buffer
 
 function App() {
   const [plot, setPlot] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+
+
   const  handleUrl = async (url) => {
+    setPlot(null);
     setLoading(true);
-    await fetch('http://127.0.0.1:5000/plot/', 
-     {
-      method: "post",
-      headers: {
-        'Accept': 'application/json',
+    setErrorMessage(null);
+
+    const headers =  {
+        'Accept': 'image/png',
         'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({url})
-    }
-    ).then((result)=> result.blob())
-    .then(blob => {
-      setPlot(URL.createObjectURL(blob));
-      setLoading(false);
-    });
+      }
+  axios.post('http://127.0.0.1:5000/plot/', {url}, {responseType: "arraybuffer"})
+  .then(response => {  
+  console.log(response);  
+  setLoading(false);
+  setPlot(Buffer.from(response.data, "binary").toString("base64"))
+}).catch(error => {setErrorMessage(Buffer.from(error.response.data, "utf-8").toString()); setLoading(false);});
+
   }
   return (
     <div className="App">
@@ -52,7 +59,10 @@ function App() {
           <CircularProgress />
           <div>Generating plot</div>
         </Stack>
-        : <img src={plot} alt=''/>
+        : <img src={`data:image/png;charset=utf-8;base64,${plot}`} alt=''/>
+      }
+      {
+       errorMessage && <Alert severity="error">{errorMessage}</Alert>
       }
       </Box>
     </div>

@@ -1,10 +1,22 @@
-from flask import Flask, request, send_file
+from flask import Flask, request, send_file, render_template
 from flask_cors import CORS
+from werkzeug.exceptions import HTTPException
 
 import parse_ticks
 
+
+
 app = Flask(__name__)
 CORS(app)
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    if isinstance(e, HTTPException):
+        return e
+    if isinstance(e, parse_ticks.UrlFormatError):
+        return (e.message, 500)
+    return render_template("500_generic.html", e=e), 500
+
 
 @app.route("/plot/",  methods=['POST'])
 def get_plot():

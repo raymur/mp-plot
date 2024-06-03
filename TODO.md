@@ -15,10 +15,17 @@ MVP
  - use different file for csvs, dfs, and plots in a data dir (& fix bug of past ticks not getting refreshed) (done)
  - bug: make sure color map works when only 2 disaplines (ie sport/trad) (done)
  - bug: edgecase null values sport/trad route type (done)
+ - handling error, axios vs fetch, how to send error from flask (done)
  - get running in production
+    - get flask/cors prod ready
+    - decide where to host/deploy (github workflows??, heroku app)
+    - is it an issue to store files in data dir??
+    - 
+    - configure
 
 
 Subsequent Improvemnts
+ - minimize directory by cleaning up notebook files
  - better title naming convention for plot (ie 'ray-murphy' -> "Ray Murphy\'s ticks")
  - caching tick files for multiple runs and graph generations
  - local storage for last used url

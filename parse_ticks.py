@@ -8,6 +8,11 @@ import datetime
 import math
 import os.path
 
+class UrlFormatError (Exception):
+    def __init__(self, message):
+        super().__init__()
+        self.message = message
+
 
 def normailize_rating_code(x):
     conditions = {
@@ -48,7 +53,7 @@ def download_ticks(user_url):
     match_string = '^((https\:\/\/)?www\.)?mountainproject\.com\/user\/([0-9]+)\/([0-9a-z\-]+)\/?$'
     match = re.match(match_string, user_url)
     if not match:
-        raise ValueError('URL not correctly formatted')
+        raise UrlFormatError('Unable to parse URL. Try using a link that looks something like this: mountainproject.com/user/106982538/nick-weicht')
     user_id, user_name = match.group(3), match.group(4)
     tick_download_url = 'https://www.mountainproject.com/user/%s/%s/tick-export' % (user_id, user_name)
     filename = 'data/' + user_id + '.csv'
