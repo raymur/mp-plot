@@ -109,7 +109,7 @@ def save_plot(df, plot_filename):
     ylim_min, ylim_max = plt.ylim()
     yticks, ylabels = generate_yticks(ylim_min, ylim_max)
     plt.yticks(yticks, ylabels)
-    plt.xticks(rotation=45)
+    plt.xticks(rotation=30)
     plt.legend(handles=scatter.legend_elements()[0], labels=styles, loc='upper left', shadow=True)
     plt.title('Rock Climbing Ticks')
     plt.savefig(plot_filename)

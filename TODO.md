@@ -10,8 +10,8 @@ MVP
      - use attractive components & MP theme colors (done)
      - widen search field (done)
      - change text on search button (done)
-     - loading icons while waiting for response 
-     - front end dont submit bad url
+     - loading icons while waiting for response (done)
+     - front end dont submit bad url (done)
  - use different file for csvs, dfs, and plots in a data dir (& fix bug of past ticks not getting refreshed) (done)
  - bug: make sure color map works when only 2 disaplines (ie sport/trad) (done)
  - bug: edgecase null values sport/trad route type (done)
