@@ -17,7 +17,7 @@ MVP
  - bug: edgecase null values sport/trad route type (done)
  - handling error, axios vs fetch, how to send error from flask (done)
  - get running in production
-    - get flask/cors prod ready
+    - get flask/cors prod ready (done)
     - decide where to host/deploy (github workflows??, heroku app)
     - is it an issue to store files in data dir??
     - 

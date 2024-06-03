@@ -1,4 +1,4 @@
 #!/bin/bash
 
 source mp-plot/bin/activate
-flask --app api --debug run
+gunicorn -w4 -b localhost:5000 "app:create_app()"
