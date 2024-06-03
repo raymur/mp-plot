@@ -8,7 +8,8 @@ CORS(app)
 
 @app.route("/plot/",  methods=['POST'])
 def get_plot():
-    parse_ticks.download_ticks(request.json['url'])
-    df = parse_ticks.get_tick_df()
-    filename = parse_ticks.save_plot(df)
+    tick_filename = parse_ticks.download_ticks(request.json['url'])
+    df = parse_ticks.get_tick_df(tick_filename)
+    plot_filename = tick_filename.replace('.csv', '.png')
+    filename = parse_ticks.save_plot(df, plot_filename)
     return send_file(filename, mimetype='image/png')

@@ -6,9 +6,8 @@ import numpy
 import re
 import datetime
 import math
+import os.path
 
-TICK_FILENAME = 'ticks.csv'
-PLOT_FILENAME = 'tick_plot.png'
 
 def normailize_rating_code(x):
     conditions = {
@@ -46,17 +45,22 @@ def normailize_rating_code(x):
 
 def download_ticks(user_url):
     # sanitize inputs
-    match_string = '^((https\:\/\/)?www\.)?mountainproject\.com\/user\/([0-9]+\/[0-9a-z\-]+)\/?$'
+    match_string = '^((https\:\/\/)?www\.)?mountainproject\.com\/user\/([0-9]+)\/([0-9a-z\-]+)\/?$'
     match = re.match(match_string, user_url)
     if not match:
         raise ValueError('URL not correctly formatted')
-    user_path = match.group(3)
-    tick_download_url = 'https://www.mountainproject.com/user/%s/tick-export' % user_path
-    with request.urlopen(tick_download_url) as resp, open(TICK_FILENAME, 'w') as f:
-        f.write(resp.read().decode('utf-8'))
+    user_id, user_name = match.group(3), match.group(4)
+    tick_download_url = 'https://www.mountainproject.com/user/%s/%s/tick-export' % (user_id, user_name)
+    filename = 'data/' + user_id + '.csv'
+    if not os.path.isfile(filename):
+        # TODO: handle case that tick file needs to be updated
+        with request.urlopen(tick_download_url) as resp, open(filename, 'w') as f:
+            f.write(resp.read().decode('utf-8'))
+    return filename
+        
 
-def get_tick_df():
-    df = pd.read_csv(TICK_FILENAME)
+def get_tick_df(filename):
+    df = pd.read_csv(filename)
     style_types = ['Lead', 'Solo', 'Flash', 'Send', numpy.nan]
     columns = ['Date', 'Rating Code', 'Route Type', 'Pitches', 'Style']
     df = df.loc[df['Style'].isin(style_types), columns]
@@ -78,7 +82,7 @@ def generate_yticks(ylim_min, ylim_max):
     labels = list(labels[filter_arr])
     return yticks, labels
 
-def save_plot(df):
+def save_plot(df, plot_filename):
     x = df['Date']
     y = df['Normalized Rating Code']
     c = df.apply(lambda x : 3 if (x['Style'] == 'Solo') else (1 if (x['Route Type'] == 'Sport') else 2) , axis=1)
@@ -92,6 +96,7 @@ def save_plot(df):
     plt.xticks(rotation=45)
     plt.legend(handles=scatter.legend_elements()[0], labels=styles, loc='upper left', shadow=True)
     plt.title('Rock Climbing Ticks')
-    plt.savefig(PLOT_FILENAME)
-    return PLOT_FILENAME
+    plt.savefig(plot_filename)
+    plt.close()
+    return plot_filename
 

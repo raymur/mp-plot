@@ -12,11 +12,12 @@ MVP
      - change text on search button (done)
      - loading icons while waiting for response
      - front end dont submit bad url
- - use temp file for csvs, dfs, and plots in a data dir (& fix bug of past ticks not getting refreshed)
+ - use different file for csvs, dfs, and plots in a data dir (& fix bug of past ticks not getting refreshed) (done)
  - get running in production
 
 
 Subsequent Improvemnts
+ - better title naming convention for plot (ie 'ray-murphy' -> "Ray Murphy\'s ticks")
  - caching tick files for multiple runs and graph generations
  - local storage for last used url
  - analystics for how many submitted queries
