@@ -3,8 +3,7 @@ import { useState } from 'react';
 
 
 function MpForm({urlValue}) {
-    const defaultValue = 'https://www.mountainproject.com/user/201537336/rachel-murphy';
-    const [url, setUrl] = useState(defaultValue);
+    const [url, setUrl] = useState('');
     async function search  (event) {
         event.preventDefault()
         await urlValue(url);
@@ -13,14 +12,12 @@ function MpForm({urlValue}) {
     <div className="MpForm">
       <form onSubmit={search}>
         <label >
-          MP user url:
           <input 
             name="urlValue" 
-            placeholder="https://www.mountainproject.com/user/10788/c-miller" 
-            defaultValue={defaultValue}
+            placeholder="mountain project user url" 
             onChange={(e)=>setUrl(e.target.value)}/> 
         </label>
-        <button type="submit" >Search</button>
+        <button type="submit" >Generate plot</button>
       </form>
     </div>
   );

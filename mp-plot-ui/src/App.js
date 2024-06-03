@@ -19,8 +19,10 @@ function App() {
   }
   return (
     <div className="App">
-      <h1>Mountain Project Tick Plot</h1>
-      <MpForm urlValue={handleUrl}/>
+      <div className='Search-Header'>
+        <h1>Mountain Project Tick Plot</h1>
+        <MpForm urlValue={handleUrl}/>
+      </div>
       <img src={plot} alt='ticks'/>
     </div>
   );

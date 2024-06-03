@@ -52,7 +52,7 @@ def download_ticks(user_url):
         raise ValueError('URL not correctly formatted')
     user_path = match.group(3)
     tick_download_url = 'https://www.mountainproject.com/user/%s/tick-export' % user_path
-    with request.urlopen(tick_download_url) as resp, open('ticks.csv', 'w') as f:
+    with request.urlopen(tick_download_url) as resp, open(TICK_FILENAME, 'w') as f:
         f.write(resp.read().decode('utf-8'))
 
 def get_tick_df():
@@ -61,6 +61,7 @@ def get_tick_df():
     columns = ['Date', 'Rating Code', 'Route Type', 'Pitches', 'Style']
     df = df.loc[df['Style'].isin(style_types), columns]
     df = df.loc[df['Route Type'].str.contains('Trad|Sport', regex=True)]
+    df = df.loc[df['Rating Code'] < 20000] # filter out bouldering/ice/mixed/aid/snow
     df['Date'] = df['Date'].apply(lambda x: datetime.datetime.strptime(x, "%Y-%m-%d").date() if type(x) == str else x)
     df = df.sort_values(by='Date', ascending=True)
     df['Normalized Rating Code'] = df['Rating Code'].apply(normailize_rating_code)
@@ -90,7 +91,7 @@ def save_plot(df):
     plt.yticks(yticks, ylabels)
     plt.xticks(rotation=45)
     plt.legend(handles=scatter.legend_elements()[0], labels=styles, loc='upper left', shadow=True)
-    plt.title('Climbing Ticks')
+    plt.title('Rock Climbing Ticks')
     plt.savefig(PLOT_FILENAME)
     return PLOT_FILENAME
 

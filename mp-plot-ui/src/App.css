@@ -2,6 +2,12 @@
   text-align: center;
 }
 
+.Search-Header {
+  background-color: #151515;
+  color: #fff;
+  padding: 50px;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -39,5 +45,27 @@
 
 
 input[name="urlValue"] {
-  width: 400px;
+  width: 450px;
+  height: 31.5px;
+  border-radius: 5px;
+  border: none;
+  padding-left: 15px;
+  margin-right:15px;
+
 }
+
+button[type="submit"]:hover {
+    background-color: #264d73;
+    border-color: #24486b;
+    color: #fff;
+}
+
+button[type="submit"] {
+  font-size: 14px;
+  padding-bottom: .3rem;
+  padding-top: .3rem;
+  background-color: #336799;
+  border-color: #336799;
+  color: #fff;
+}
+
