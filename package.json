@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "postinstall": "npm install --prefix mp-plot-ui"
+    "postinstall": "npm install --prefix mp-plot-ui",
     "start": "cd mp-plot-ui && npm run start",
     "build": "cd mp-plot-ui && npm run build",
     "serve": "cd mp-plot-ui && npm run serve"
