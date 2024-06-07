@@ -18,7 +18,7 @@ MVP
  - handling error, axios vs fetch, how to send error from flask (done)
  - get running in production
     - get flask/cors prod ready (done)
-    - decide where to host/deploy (github workflows??, heroku app)
+    - decide where to host/deploy (heroku app!!!! basic/eco)
     - is it an issue to store files in data dir??
     - 
     - configure
@@ -27,6 +27,7 @@ MVP
 Subsequent Improvemnts
  - minimize directory by cleaning up notebook files
  - better title naming convention for plot (ie 'ray-murphy' -> "Ray Murphy\'s ticks")
+ - github workflows + dev branch
  - caching tick files for multiple runs and graph generations
  - local storage for last used url
  - analystics for how many submitted queries
