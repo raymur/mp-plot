@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "cd mp-plot-ui && npm start",
-    "build": "cd mp-plot-ui && npm build"
+    "start": "cd mp-plot-ui && npm run start",
+    "build": "cd mp-plot-ui && npm run build",
+    "serve": "cd mp-plot-ui && npm run serve"
   }
 }
