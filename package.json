@@ -2,6 +2,9 @@
   "name": "mp-plot",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "start": "cd mp-plot-ui && npm install && npm install -g serve && npm run build && rm -rf node_modules && serve -s build",
     "build": "cd mp-plot-ui && npm run build",
