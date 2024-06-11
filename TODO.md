@@ -18,9 +18,10 @@ MVP
  - handling error, axios vs fetch, how to send error from flask (done)
  - get running in production
     - get flask/cors prod ready (done)
-    - decide where to host/deploy (heroku app!!!! basic/eco)
-    - is it an issue to store files in data dir??
-    - 
+    - decide where to host/deploy (heroku app!!!! basic/eco) (done)
+    - is it an issue to store files in data dir?? 
+    - resolve size of application, reduce node and python modules
+    - get backend to be hit
     - configure
 
 
