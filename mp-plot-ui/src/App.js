@@ -15,6 +15,8 @@ import Alert from '@mui/material/Alert';
 import axios from "axios";
 
 var Buffer = require('buffer/').Buffer
+const PORT = process.env.PORT
+const BACKEND_URL = 'http://127.0.0.1:' + PORT
 
 function App() {
   const [plot, setPlot] = useState(null);
@@ -31,7 +33,7 @@ function App() {
         'Accept': 'image/png',
         'Content-Type': 'application/json'
       }
-  axios.post('http://127.0.0.1:5000/plot/', {url}, {responseType: "arraybuffer"})
+  axios.post(BACKEND_URL + '/plot/', {url}, {responseType: "arraybuffer"})
   .then(response => {  
   console.log(response);  
   setLoading(false);
