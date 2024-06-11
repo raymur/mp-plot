@@ -8,8 +8,9 @@ node_modules
 # testing
 /coverage
 
-# production
-/build
+# production 
+# needed for heroku
+#/build
 
 # misc
 .DS_Store
