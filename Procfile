@@ -1,2 +1,1 @@
-web:  npm start 
-server: gunicorn -w4 -b "127.0.0.1:${PORT}" "app:create_app()"
+web: gunicorn -w4 app:create_app()"
