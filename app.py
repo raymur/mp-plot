@@ -20,10 +20,10 @@ def create_app():
 
     @app.route("/plot/",  methods=['POST'])
     def get_plot():
-        tick_filename = parse_ticks.download_ticks(request.json['url'])
+        tick_filename, username = parse_ticks.download_ticks(request.json['url'])
         df = parse_ticks.get_tick_df(tick_filename)
         plot_filename = tick_filename.replace('.csv', '.png')
-        filename = parse_ticks.save_plot(df, plot_filename)
+        filename = parse_ticks.save_plot(df, plot_filename, username)
         return send_file(filename, mimetype='image/png')
     
     return app

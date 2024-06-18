@@ -54,14 +54,14 @@ def download_ticks(user_url):
     match = re.match(match_string, user_url)
     if not match:
         raise UrlFormatError('Unable to parse URL. Try using a link that looks something like this: mountainproject.com/user/106982538/nick-weicht')
-    user_id, user_name = match.group(3), match.group(4)
-    tick_download_url = 'https://www.mountainproject.com/user/%s/%s/tick-export' % (user_id, user_name)
+    user_id, username = match.group(3), match.group(4)
+    tick_download_url = 'https://www.mountainproject.com/user/%s/%s/tick-export' % (user_id, username)
     filename = 'data/' + user_id + '.csv'
     if not os.path.isfile(filename):
         # TODO: handle case that tick file needs to be updated
         with request.urlopen(tick_download_url) as resp, open(filename, 'w') as f:
             f.write(resp.read().decode('utf-8'))
-    return filename
+    return filename, username
         
 
 def get_tick_df(filename):
@@ -103,8 +103,14 @@ def get_color_info(climb_types: numpy.array):
         styles.append('Solo')
     return ListedColormap(cmap, N=N), styles
     
+def get_title(username: str):
+    if not username:
+        return 'Rock Climbing Ticks'
+    name = username.replace('-', ' ').title()
+    return "%s's Rock Climbing Ticks" % name
 
-def save_plot(df, plot_filename):
+def save_plot(df, plot_filename, username=None):
+    title = get_title(username)
     x = df['Date']
     y = df['Normalized Rating Code']
     c = df.apply(lambda x : 2 if (x['Style'] == 'Solo') else (0 if ('Sport' in x['Route Type'] and 'Trad' not in x['Route Type']) else 1) , axis=1)
@@ -116,7 +122,7 @@ def save_plot(df, plot_filename):
     plt.yticks(yticks, ylabels)
     plt.xticks(rotation=30)
     plt.legend(handles=scatter.legend_elements()[0], labels=styles, loc='upper left', shadow=True)
-    plt.title('Rock Climbing Ticks')
+    plt.title(title)
     plt.savefig(plot_filename)
     plt.close()
     return plot_filename

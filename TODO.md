@@ -19,21 +19,21 @@ MVP
  - get running in production
     - get flask/cors prod ready (done)
     - decide where to host/deploy (heroku app!!!! basic/eco) (done)
-    - is it an issue to store files in data dir?? 
-    - resolve size of application, reduce node and python modules
-    - get backend to be hit
-    - configure
+    - is it an issue to store files in data dir??  (dont think so, might crash and have to be restarted though)
+    - resolve size of application, reduce node and python modules (node solved, python data science libs are bigggg)
+    - get backend to be hit (done)
+    - configure (done)
 
 
 Subsequent Improvemnts
- - minimize directory by cleaning up notebook files
- - better title naming convention for plot (ie 'ray-murphy' -> "Ray Murphy\'s ticks")
- - github workflows + dev branch
- - caching tick files for multiple runs and graph generations
+ - minimize directory by cleaning up notebook files (done)
+ - better title naming convention for plot (ie 'ray-murphy' -> "Ray Murphy\'s ticks") (done)
+ - form for more custom graph options (groom more)
  - local storage for last used url
  - analystics for how many submitted queries
  - smooth transitions for displaying / changing plot
- - form for more custom graph options (groom more)
+ - github workflows + dev branch
+ - caching tick df's in files for multiple runs and graph generations
  - best fit line?
  - improve letter grade normalized rating codes
  - ability to upload excel file for private ticks
