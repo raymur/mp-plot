@@ -29,6 +29,7 @@ Subsequent Improvemnts
  - minimize directory by cleaning up notebook files (done)
  - better title naming convention for plot (ie 'ray-murphy' -> "Ray Murphy\'s ticks") (done)
  - form for more custom graph options (groom more)
+ - SSL certs
  - local storage for last used url
  - analystics for how many submitted queries
  - smooth transitions for displaying / changing plot

@@ -64,7 +64,7 @@ def download_ticks(user_url):
     return filename, username
         
 
-def get_tick_df(filename):
+def get_tick_df(config, filename):
     df = pd.read_csv(filename)
     style_types = ['Lead', 'Solo', 'Flash', 'Send', numpy.nan]
     columns = ['Date', 'Rating Code', 'Route Type', 'Pitches', 'Style']

@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file, render_template
+from flask import Flask, jsonify, request, send_file, render_template
 from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
 import parse_ticks
@@ -20,11 +20,16 @@ def create_app():
 
     @app.route("/plot/",  methods=['POST'])
     def get_plot():
-        tick_filename, username = parse_ticks.download_ticks(request.json['url'])
-        df = parse_ticks.get_tick_df(tick_filename)
+        config = request.json
+        tick_filename, username = parse_ticks.download_ticks(config['url'])
+        df = parse_ticks.get_tick_df(config, tick_filename)
         plot_filename = tick_filename.replace('.csv', '.png')
         filename = parse_ticks.save_plot(df, plot_filename, username)
         return send_file(filename, mimetype='image/png')
+    
+    @app.route("/ping/",  methods=['GET'])
+    def ping():
+        return jsonify("pong")
     
     return app
     
