@@ -28,12 +28,13 @@ MVP
 Subsequent Improvemnts
  - minimize directory by cleaning up notebook files (done)
  - better title naming convention for plot (ie 'ray-murphy' -> "Ray Murphy\'s ticks") (done)
+ - SSL certs (use express with diy web server) (done)
  - form for more custom graph options (groom more)
- - SSL certs
  - local storage for last used url
  - analystics for how many submitted queries
  - smooth transitions for displaying / changing plot
  - github workflows + dev branch
+ - mobile friendly
  - caching tick df's in files for multiple runs and graph generations
  - best fit line?
  - improve letter grade normalized rating codes
