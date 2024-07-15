@@ -144,7 +144,6 @@ def save_plot(df, plot_filename, username=None):
     y = df['Normalized Rating Code']
     c = df.apply(get_color_code, axis=1)
     area = (df['Pitches'].apply(lambda x : math.pow(x, 0.9)) * 15)
-    print(c)
     colors, styles = get_color_info(c.unique())
     scatter = plt.scatter(x, y, c=c, cmap=colors, s=area, alpha=0.5) 
     ylim_min, ylim_max = plt.ylim()
