@@ -10,12 +10,15 @@ def create_app():
     CORS(app)
 
     @app.errorhandler(Exception)
-    def handle_exception(e):
+    def handle_exception(e: Exception):
         if isinstance(e, HTTPException):
             return e
         if isinstance(e, parse_ticks.UrlFormatError):
             return (e.message, 500)
-        return render_template("500_generic.html", e=e), 500
+        if isinstance(e, parse_ticks.EmptyDataFrameError):
+            return ("No ticks to display. Change plot settings (or maybe just climb more).", 500)
+        print(e)
+        return  ("server error", 500)
 
 
     @app.route("/plot/",  methods=['POST'])

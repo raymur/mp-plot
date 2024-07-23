@@ -24,6 +24,9 @@ MVP
     - get backend to be hit (done)
     - configure (done)
 
+Bugs:
+
+
 
 Subsequent Improvemnts
  - minimize directory by cleaning up notebook files (done)

@@ -12,6 +12,11 @@ class UrlFormatError (Exception):
     def __init__(self, message):
         super().__init__()
         self.message = message
+        
+class EmptyDataFrameError (Exception):
+    def __init__(self, message):
+        super().__init__()
+        self.message = message
 
 
 def normailize_rating_code(x):
@@ -53,7 +58,7 @@ def download_ticks(user_url):
     match_string = '^((https\:\/\/)?www\.)?mountainproject\.com\/user\/([0-9]+)\/([0-9a-z\-]+)\/?$'
     match = re.match(match_string, user_url)
     if not match:
-        raise UrlFormatError('Unable to parse URL. Try using a link that looks something like this: mountainproject.com/user/106982538/nick-weicht')
+        raise UrlFormatError('Unable to parse URL. Try using a link that looks something like this: mountainproject.com/user/200683687/ray-murphy')
     user_id, username = match.group(3), match.group(4)
     tick_download_url = 'https://www.mountainproject.com/user/%s/%s/tick-export' % (user_id, username)
     filename = 'data/' + user_id + '.csv'
@@ -63,17 +68,45 @@ def download_ticks(user_url):
             f.write(resp.read().decode('utf-8'))
     return filename, username
         
+def str_to_date(x):
+    try:
+        if type(x) == str:
+            return datetime.datetime.strptime(x, "%Y-%m-%d").date()
+        else:
+            return x
+    except ValueError as ve:
+        return datetime.datetime(1970, 1, 1).date()
+
+def get_attribute_title(s):
+    return s.upper() if s == 'tr' else s.title()
 
 def get_tick_df(config, filename):
     df = pd.read_csv(filename)
-    style_types = ['Lead', 'Solo', 'Flash', 'Send', numpy.nan]
-    columns = ['Date', 'Rating Code', 'Route Type', 'Pitches', 'Style']
+    style_types = [get_attribute_title(k) for k, v in config.get("styles", {}).items() if v]
+    route_types = [get_attribute_title(k) for k, v in config.get("types", {}).items() if v]
+    route_types_re = '|'.join(route_types)
+    include_falls = config.get("includeFalls", False)
+    start_date = config.get("dates", {}).get("start")
+    end_date = config.get("dates", {}).get("end")
+    if '(Blank)' in style_types:
+        style_types.pop('(Blank)')
+        style_types.append(numpy.nan)
+    # include boulders:  'Flash', 'Send'
+    columns = ['Date', 'Rating Code', 'Route Type', 'Pitches', 'Style', 'Lead Style']
     df = df.loc[df['Style'].isin(style_types), columns]
-    df = df.loc[df['Route Type'].str.contains('Trad|Sport', na=False, regex=True)]
+    df['Date'] = df['Date'].apply(str_to_date)
+    if start_date:
+        start_date = datetime.datetime.strptime(start_date, '%Y-%m-%dT%H:%M:%S.%fZ').date()
+        df = df.loc[df['Date'] >= start_date ]
+    if end_date:
+        end_date = datetime.datetime.strptime(end_date, '%Y-%m-%dT%H:%M:%S.%fZ').date()
+        df = df.loc[df['Date'] <= end_date ]
+    if not include_falls:
+        df = df.loc[df['Lead Style'] != 'Fell/Hung']
+    df = df.loc[df['Route Type'].str.contains(route_types_re, na=False, regex=True)]
     # TODO: check null
     df = df.loc[df['Rating Code'] < 20000] # filter out bouldering/ice/mixed/aid/snow
     # TODO: check null
-    df['Date'] = df['Date'].apply(lambda x: datetime.datetime.strptime(x, "%Y-%m-%d").date() if type(x) == str else x)
     df = df.sort_values(by='Date', ascending=True)
     df['Normalized Rating Code'] = df['Rating Code'].apply(normailize_rating_code)
     return df
@@ -99,8 +132,11 @@ def get_color_info(climb_types: numpy.array):
         cmap.append('b')
         styles.append('Trad')
     if 2 in climb_types:
-        cmap.append('y')
+        cmap.append('k')
         styles.append('Solo')
+    if 3 in climb_types:
+        cmap.append('y')
+        styles.append('TR')
     return ListedColormap(cmap, N=N), styles
     
 def get_title(username: str):
@@ -109,11 +145,23 @@ def get_title(username: str):
     name = username.replace('-', ' ').title()
     return "%s's Rock Climbing Ticks" % name
 
-def save_plot(df, plot_filename, username=None):
+def get_color_code(x):
+    if x['Style'] == 'Solo':
+        return 2
+    elif x['Style'] == 'TR':
+        return 3
+    elif 'Sport' in x['Route Type'] and 'Trad' not in x['Route Type']:
+        return 0
+    else:
+        return 1
+
+def save_plot(df: pd.DataFrame, plot_filename, username=None):
+    if df.empty:
+        raise EmptyDataFrameError('empty df')
     title = get_title(username)
     x = df['Date']
     y = df['Normalized Rating Code']
-    c = df.apply(lambda x : 2 if (x['Style'] == 'Solo') else (0 if ('Sport' in x['Route Type'] and 'Trad' not in x['Route Type']) else 1) , axis=1)
+    c = df.apply(get_color_code, axis=1)
     area = (df['Pitches'].apply(lambda x : math.pow(x, 0.9)) * 15)
     colors, styles = get_color_info(c.unique())
     scatter = plt.scatter(x, y, c=c, cmap=colors, s=area, alpha=0.5) 
