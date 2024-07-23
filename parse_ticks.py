@@ -124,19 +124,25 @@ def generate_yticks(ylim_min, ylim_max):
 
 def get_color_info(climb_types: numpy.array):
     cmap, styles = [], []
-    N = len(climb_types)
     if 0 in climb_types:
         cmap.append('r')
-        styles.append('Sport')
+        styles.append('Sport lead')
     if 1 in climb_types:
         cmap.append('b')
-        styles.append('Trad')
+        styles.append('Trad lead')
     if 2 in climb_types:
+        cmap.append('m')
+        styles.append('Mixed lead')
+    if 3 in climb_types:
         cmap.append('k')
         styles.append('Solo')
-    if 3 in climb_types:
+    if 4 in climb_types:
         cmap.append('y')
         styles.append('TR')
+    if 5 in climb_types:
+        cmap.append('c')
+        styles.append('Follow') 
+    N = len(cmap)
     return ListedColormap(cmap, N=N), styles
     
 def get_title(username: str):
@@ -147,13 +153,29 @@ def get_title(username: str):
 
 def get_color_code(x):
     if x['Style'] == 'Solo':
-        return 2
-    elif x['Style'] == 'TR':
         return 3
-    elif 'Sport' in x['Route Type'] and 'Trad' not in x['Route Type']:
+    elif x['Style'] == 'TR':
+        return 4
+    elif x['Style'] == 'Follow':
+        return 5
+    elif 'Sport' in x['Route Type'] and 'Trad' in x['Route Type']:
+        return 2
+    elif 'Sport' in x['Route Type']:
         return 0
     else:
         return 1
+
+def convert_to_consecutive_indecies(s: pd.Series):
+    unique_values = s.unique()
+    unique_values.sort()
+    mapping = dict((val, i) for i, val in enumerate(unique_values))
+    return s.apply(lambda x : mapping[x])
+        
+def get_plot_colors(df: pd.DataFrame):
+    c = df.apply(get_color_code, axis=1)
+    colors, labels = get_color_info(c.unique())
+    c = convert_to_consecutive_indecies(c)
+    return c, colors, labels
 
 def save_plot(df: pd.DataFrame, plot_filename, username=None):
     if df.empty:
@@ -161,15 +183,14 @@ def save_plot(df: pd.DataFrame, plot_filename, username=None):
     title = get_title(username)
     x = df['Date']
     y = df['Normalized Rating Code']
-    c = df.apply(get_color_code, axis=1)
     area = (df['Pitches'].apply(lambda x : math.pow(x, 0.9)) * 15)
-    colors, styles = get_color_info(c.unique())
+    c, colors, labels = get_plot_colors(df)
     scatter = plt.scatter(x, y, c=c, cmap=colors, s=area, alpha=0.5) 
     ylim_min, ylim_max = plt.ylim()
     yticks, ylabels = generate_yticks(ylim_min, ylim_max)
     plt.yticks(yticks, ylabels)
     plt.xticks(rotation=30)
-    plt.legend(handles=scatter.legend_elements()[0], labels=styles, loc='upper left', shadow=True)
+    plt.legend(handles=scatter.legend_elements()[0], labels=labels, loc='upper left', shadow=True)
     plt.title(title)
     plt.savefig(plot_filename)
     plt.close()
