@@ -12,6 +12,11 @@ class UrlFormatError (Exception):
     def __init__(self, message):
         super().__init__()
         self.message = message
+        
+class EmptyDataFrameError (Exception):
+    def __init__(self, message):
+        super().__init__()
+        self.message = message
 
 
 def normailize_rating_code(x):
@@ -72,23 +77,36 @@ def str_to_date(x):
     except ValueError as ve:
         return datetime.datetime(1970, 1, 1).date()
 
-def get_style_title(s):
+def get_attribute_title(s):
     return s.upper() if s == 'tr' else s.title()
 
 def get_tick_df(config, filename):
     df = pd.read_csv(filename)
-    style_types = [get_style_title(k) for k, v in config.get("styles", {}).items() if v]
+    style_types = [get_attribute_title(k) for k, v in config.get("styles", {}).items() if v]
+    route_types = [get_attribute_title(k) for k, v in config.get("types", {}).items() if v]
+    route_types_re = '|'.join(route_types)
+    include_falls = config.get("includeFalls", False)
+    start_date = config.get("dates", {}).get("start")
+    end_date = config.get("dates", {}).get("end")
     if '(Blank)' in style_types:
         style_types.pop('(Blank)')
         style_types.append(numpy.nan)
     # include boulders:  'Flash', 'Send'
-    columns = ['Date', 'Rating Code', 'Route Type', 'Pitches', 'Style']
+    columns = ['Date', 'Rating Code', 'Route Type', 'Pitches', 'Style', 'Lead Style']
     df = df.loc[df['Style'].isin(style_types), columns]
-    df = df.loc[df['Route Type'].str.contains('Trad|Sport|TR', na=False, regex=True)]
+    df['Date'] = df['Date'].apply(str_to_date)
+    if start_date:
+        start_date = datetime.datetime.strptime(start_date, '%Y-%m-%dT%H:%M:%S.%fZ').date()
+        df = df.loc[df['Date'] >= start_date ]
+    if end_date:
+        end_date = datetime.datetime.strptime(end_date, '%Y-%m-%dT%H:%M:%S.%fZ').date()
+        df = df.loc[df['Date'] <= end_date ]
+    if not include_falls:
+        df = df.loc[df['Lead Style'] != 'Fell/Hung']
+    df = df.loc[df['Route Type'].str.contains(route_types_re, na=False, regex=True)]
     # TODO: check null
     df = df.loc[df['Rating Code'] < 20000] # filter out bouldering/ice/mixed/aid/snow
     # TODO: check null
-    df['Date'] = df['Date'].apply(str_to_date)
     df = df.sort_values(by='Date', ascending=True)
     df['Normalized Rating Code'] = df['Rating Code'].apply(normailize_rating_code)
     return df
@@ -137,8 +155,9 @@ def get_color_code(x):
     else:
         return 1
 
-def save_plot(df, plot_filename, username=None):
-    # TODO: handle empty df
+def save_plot(df: pd.DataFrame, plot_filename, username=None):
+    if df.empty:
+        raise EmptyDataFrameError('empty df')
     title = get_title(username)
     x = df['Date']
     y = df['Normalized Rating Code']
